@@ -16,6 +16,12 @@ app.use(express.static("public")) //"public": is folder name: if we wants to sto
 app.use(cookieParser()) //cookieparser is used to server ki browser ki cookie access kar pau aur kuch store kar pau jis se ki crud operation kar sakta hai
  
 
+//routes immport
 
+import userRouter from './routes/user.routes.js'
+
+
+//routes declaration
+app.use('/api/v1/users', userRouter) //api is a prefix for all routes of userRouter
 
 export default app
