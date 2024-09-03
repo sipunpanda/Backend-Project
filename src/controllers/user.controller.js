@@ -16,7 +16,10 @@ const registerUser = asyncHandler(async (req, res) => {
     // return response
 
     const { fullName, email, username, password } = req.body
-    console.log(fullName, email);
+    // console.log(fullName, email);
+    // console.log(req.body,"body then");
+    // console.log(req.files,"body then file");
+
 
     if (
         [fullName, email, username, password].some((field) => field?.trim() === "")
@@ -24,7 +27,7 @@ const registerUser = asyncHandler(async (req, res) => {
         throw new ApiError(400, "All fields are required")
     }
 
-    const existedUser = User.findOne({
+    const existedUser = await User.findOne({
         $or: [{ username }, { email }]
     })
 
@@ -33,7 +36,15 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 
     const avatarLocalPath = req.files?.avatar[0]?.path;
-    const coverImageLocalPath = req.files?.coverImage[0]?.path;
+    // console.log(avatarLocalPath,"avatarpath");
+    
+    // const coverImageLocalPath = req.files?.coverImage[0]?.path; //not working for empty 
+    // console.log(coverImageLocalPath,"avatarpath");
+    let coverImageLocalPath;
+    if (req.files && Array.isArray(req.files.coverImage) && req.files.coverImage.length > 0) {
+        coverImageLocalPath = req.files.coverImage[0].path
+    }
+
 
     if (!avatarLocalPath) {
         throw new ApiError(400, "Avatar Image is Required")
@@ -49,7 +60,7 @@ const registerUser = asyncHandler(async (req, res) => {
     const user = await User.create({
         fullName,
         avatar: avatar.url,
-        coverImage: avatar?.url || "",
+        coverImage: coverImage?.url || "",
         email,
         password,
         username: username.toLowerCase()
@@ -66,6 +77,7 @@ if(!createdUser){
 return res.status(201).json(
     new ApiResponse(200, createdUser, "User Register Successfully")
 )
+
 
 
 })
