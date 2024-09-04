@@ -150,5 +150,9 @@ return res.status(200).cookie("accessToken", accessToken, options)
 
 })
 
+const logoutUser = asyncHandler(async(req, res)=>{
+    // remove cookie
+   
+})
 
 export { registerUser, loginUser } 
