@@ -26,4 +26,5 @@ router.route("/login").post(loginUser)
 //secured routes
 router.route("/logout").post(varifyJWT, logoutUser) 
 
-export default router
+export  {router}
+
