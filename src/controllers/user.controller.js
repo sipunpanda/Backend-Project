@@ -277,7 +277,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Full Name and Email are Required");
     }
 
-    const user = User.findByIdAndUpdate(
+    const user = await User.findByIdAndUpdate(
         req.user?._id,
         {
             $set: email,
@@ -299,6 +299,10 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
     if (!avatarLocalPath) {
         throw ApiError(400, "Avatar file is missing")
     }
+
+
+    // delete old image
+
     const avatar = await uploadOnCloudinary(avatarLocalPath);
     if (!avatar.url) {
         throw ApiError(400, "Error uploading avatar")
