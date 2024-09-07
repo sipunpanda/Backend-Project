@@ -18,11 +18,11 @@ app.use(cookieParser()) //cookieparser is used to server ki browser ki cookie ac
 
 //routes immport
 
-// import userRouter from './routes/user.routes.js'
-import {router} from './routes/user.routes.js'
+import userRouter from './routes/user.routes.js'
+// import {router} from './routes/user.routes.js'
 
 
 //routes declaration
-app.use('/api/v1/users', router) //api is a prefix for all routes of userRouter
+app.use('/api/v1/users', userRouter) //api is a prefix for all routes of userRouter
 
 export default app
