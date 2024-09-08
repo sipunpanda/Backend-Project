@@ -1,37 +1,37 @@
-import mongoose, {Schema} from "mongoose"
+import mongoose, { Schema } from "mongoose"
 import mongooseAggregatePaginate from "mongoose-aggregate-paginate-v2"
 
-const videoSchema = new Schema (
+const videoSchema = new Schema(
     {
         videoFile: {
             type: String,
             required: true
         },
-        thumbnail:{
+        thumbnail: {
             type: String,
             required: true
         },
         title: {
             type: String,
             required: true
-    },
-    description: {
-        type: String,
-        required: true
+        },
+        description: {
+            type: String,
+            required: true
         },
         duration: {
             type: Number,
             required: true
-        } ,
-        views:{
+        },
+        views: {
             type: Number,
             default: 0
         },
         isPublished: {
-            type:Boolean,
+            type: Boolean,
             default: true
         },
-        owner:{
+        owner: {
             type: Schema.Types.ObjectId,
             ref: "User"
         }
@@ -42,5 +42,4 @@ const videoSchema = new Schema (
 )
 
 videoSchema.plugin(mongooseAggregatePaginate) //iss se mongoose agreegates query likkhne ke liye help karta hai
-export const Video =mongoose.model ("Video", videoSchema)
- 
+export const Video = mongoose.model("Video", videoSchema)
