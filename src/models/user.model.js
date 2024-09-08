@@ -39,7 +39,7 @@ const userSchema = new Schema(
             type: Schema.Types.ObjectId,
             ref: "Video"
         }],
-        
+
         password: {
             type: String,
             required: [true, 'Password is Required!!']
@@ -63,16 +63,22 @@ userSchema.pre('save', async function (next) {
     next()
 })
 
-userSchema.methods.isPasswordCorrect = async function (password) {
+try {
+    userSchema.methods.isPasswordCorrect =
+    async function (password) {
+        console.log("Currentmodel");
 
-    
-    return await bcrypt.compare(password, this.password)
+        return await bcrypt.compare(password, this.password)
+    }
+} catch (error) {
+    console.log("here error",error);
+
 }
 
-userSchema.methods.generateAccessToken =  function() {
-  
-    
-  return  jwt.sign(
+userSchema.methods.generateAccessToken = function () {
+
+
+    return jwt.sign(
         {
             _id: this._id,
             email: this.email,
@@ -87,14 +93,14 @@ userSchema.methods.generateAccessToken =  function() {
     )
 }
 
-userSchema.methods.generateRefreshToken = function(){ 
-   
-   return jwt.sign(
-    
+userSchema.methods.generateRefreshToken = function () {
+
+    return jwt.sign(
+
         {
-            
+
             _id: this._id,
-            
+
 
         },
         process.env.REFRESH_TOKEN_SECRET,
@@ -102,7 +108,7 @@ userSchema.methods.generateRefreshToken = function(){
             expiresIn: process.env.REFRESH_TOKEN_EXPIRY
         }
     )
-  
+
 }
 
 

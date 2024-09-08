@@ -26,7 +26,7 @@ const generateAccessAndGenerateToken = async (userId) => {
 
 
 
-        return { refreshToken, accessToken }
+        return { accessToken, refreshToken }
 
 
     } catch (error) {
@@ -130,6 +130,7 @@ const loginUser = asyncHandler(async (req, res) => {
         $or: [{ email }, { username }]
     })
 
+
     if (!user) {
         throw new ApiError(404, "User does not Exists!")
     }
@@ -174,6 +175,7 @@ const logoutUser = asyncHandler(async (req, res) => {
                 refreshToken: undefined
             }
         },
+      
         {
             new: true
         }
@@ -195,7 +197,7 @@ const logoutUser = asyncHandler(async (req, res) => {
 })
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
-    const incommingRefreshToken = req.cookies.refreshToken || req.body.refreshToken
+    const incommingRefreshToken = req.cookies.refreshToken 
 
     if (!incommingRefreshToken) {
         throw new ApiError(401, "Unauthorized request")
@@ -221,15 +223,15 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
             secure: true
         }
 
-        const { accessToken, newRefreshToken } = await generateAccessAndGenerateToken(user._id)
+        const { accessToken, refreshToken } = await generateAccessAndGenerateToken(user._id)
 
         return res.status(200)
             .cookie("accessToken", accessToken, options)
-            .cookie("refreshToken", newRefreshToken, options)
+            .cookie("refreshToken", refreshToken, options)
             .json(
                 new ApiResponse(
                     200,
-                    { accessToken, newRefreshToken },
+                    { accessToken, refreshToken },
                     "User Access Token refreshed Successfully"
                 )
             )
@@ -244,10 +246,11 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 const changeCurrentPassword = asyncHandler(async (req, res) => {
     const { oldPassword, newPassword } = req.body
 
-    const user = await User.findById(user?._Id)
-
+   
+    const user = await User.findById(req.user?._id)
+    // console.log(user);
     const isPasswordCorrect = await user.isPasswordCorrect(oldPassword)
-
+    // console.log("Current");
     if (!isPasswordCorrect) {
         throw new ApiError(400, "Incorrect Old Password")
     }
@@ -375,10 +378,10 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
 })
 
 const getUserChannelProfile = asyncHandler(async (req, res) => {
-    const username = req.params
+    const {username} = req.params
 
     if (!username?.trim()) {
-        throw new ApiError(400, "Username is required")
+        throw new ApiError(400, "username is missing")
     }
 
     const channel = await User.aggregate([
