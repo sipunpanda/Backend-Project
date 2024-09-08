@@ -268,7 +268,8 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
 const getCurrentUser = asyncHandler(async (req, res) => {
     return res.status(200)
         .json(new ApiResponse(200, req.user, "current user fetched successfully")
-)})
+        )
+})
 
 const updateAccountDetails = asyncHandler(async (req, res) => {
     const { fullName, email } = req.body
@@ -304,7 +305,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
     // delete old image
 
     const oldImage = await User.findById(user._id)
-    if(!oldImage?.avatar){
+    if (!oldImage?.avatar) {
         throw ApiError(400, "Old Avatar file is missing")
     }
 
@@ -333,7 +334,6 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 
 })
 
-
 const updateUserCoverImage = asyncHandler(async (req, res) => {
     const coverImageLocalPath = req.file?.path
 
@@ -344,7 +344,7 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
     // delete old image
 
     const oldImage = await User.findById(user._id)
-    if(!oldImage?.coverImage){
+    if (!oldImage?.coverImage) {
         throw ApiError(400, "Old Cover image file is missing")
     }
 
@@ -373,6 +373,90 @@ const updateUserCoverImage = asyncHandler(async (req, res) => {
 
 })
 
+const getUserChannelProfile = asyncHandler(async (req, res) => {
+    const username = req.params
+
+    if (!username?.trim()) {
+        throw new ApiError(400, "Username is required")
+    }
+
+    const channel = await User.aggregate([
+        {
+            $match: {
+                username: username?.toLowerCase
+            }
+        },
+        {
+            $lookup: {
+                from: "subscriptions",
+                localField: "_id",
+                foreignField: "channel",
+                as: "subscribers"
+            }
+        },
+        {
+            $lookup: {
+                from: "subscriptions",
+                localField: "_id",
+                foreignField: "subscriber",
+                as: "subscribedTo"
+            }
+        },
+        {
+            $addFields: {
+                subscribersCount: {
+                    $size: "$subscribers"
+                },
+                channelSubscribedToCount: {
+                    $size: "$subscribedTo"
+                },
+
+                isSubscribed: {
+                    $cond: {
+                        if: { $in: [req.user?._id, "$subscribers.subscriber"] },//subscriber is from subscription model
+                        then: true,
+                        else: false
+                    }
+                }
+
+            }
+
+        },
+        {
+            $project: {   // project, projection deta hai ki sare values na projection kar ke kuch selected values dunga
+                fullName: 1,
+                username: 1,
+                subscribersCount: 1,
+                channelSubscribedToCount: 1,
+                isSubscribed: 1,
+                avatar: 1,
+                coverImage: 1,
+                email: 1
+            }
+        }
+
+    ])
+
+    console.log("this is what channel returns", channel);
+
+    if(!channel?.length){
+        throw new ApiError(404, "Channel not found")
+    }
+
+    return res.status(200)
+    .json(
+        new ApiResponse(
+            200,
+            channel[0],
+            "User Channel Profile fetched successfully"
+        )
+    )
+    
+
+})
+
+
+
 export {
     registerUser,
     loginUser,
@@ -382,5 +466,7 @@ export {
     getCurrentUser,
     updateAccountDetails,
     updateUserAvatar,
-    updateUserCoverImage
+    updateUserCoverImage,
+    getUserChannelProfile,
+
 } 
