@@ -17,12 +17,18 @@ app.use(cookieParser()) //cookieparser is used to server ki browser ki cookie ac
  
 
 //routes immport
-
 import userRouter from './routes/user.routes.js'
 // import {router} from './routes/user.routes.js'
+
+import healthcheck from "./controllers/healthcheck.controller.js"
 
 
 //routes declaration
 app.use('/api/v1/users', userRouter) //api is a prefix for all routes of userRouter
 
+app.use('api/v1/healthcheck', healthcheck)
+
 export default app
+
+
+// http://localhost:8000/api/v1/users/register
