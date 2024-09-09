@@ -18,10 +18,12 @@ export const varifyJWT = asyncHandler(async(req,res,next)=>{
            "-password -refreshToken")
    
            if(!user){
-               //
+        
                throw new ApiError(401, "Invalid Access Token")
                
            }
+           
+           
    
            req.user = user;
            next()
