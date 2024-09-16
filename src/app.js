@@ -20,7 +20,7 @@ app.use(cookieParser()) //cookieparser is used to server ki browser ki cookie ac
 import userRouter from './routes/user.routes.js'
 // import {router} from './routes/user.routes.js'
 
-import healthcheck from "./controllers/healthcheck.controller.js"
+import healthcheck from './routes/healthcheck.routes.js'
 
 
 //routes declaration
