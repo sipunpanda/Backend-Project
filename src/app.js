@@ -21,12 +21,17 @@ import userRouter from './routes/user.routes.js'
 // import {router} from './routes/user.routes.js'
 
 import healthcheck from './routes/healthcheck.routes.js'
-
+import tweetRouter from "./routes/tweet.routes.js"
+import likeRouter from "./routes/like.routes.js"
 
 //routes declaration
 app.use('/api/v1/users', userRouter) //api is a prefix for all routes of userRouter
 
 app.use('api/v1/healthcheck', healthcheck)
+
+app.use("/api/v1/tweets", tweetRouter)
+
+app.use("/api/v1/likes", likeRouter)
 
 export default app
 
