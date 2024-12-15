@@ -16,18 +16,18 @@ app.use(express.static("public")) //"public": is folder name: if we wants to sto
 app.use(cookieParser()) //cookieparser is used to server ki browser ki cookie access kar pau aur kuch store kar pau jis se ki crud operation kar sakta hai
  
 
-//routes immport
+//routes import
 import userRouter from './routes/user.routes.js'
 // import {router} from './routes/user.routes.js'
 
-// import healthcheck from './routes/healthcheck.routes.js'
+import healthcheck from './routes/healthcheck.routes.js'
 // import tweetRouter from "./routes/tweet.routes.js"
 // import likeRouter from "./routes/like.routes.js"
 
 //routes declaration
 app.use('/api/v1/users', userRouter) //api is a prefix for all routes of userRouter
 
-// app.use('api/v1/healthcheck', healthcheck)
+app.use('/api/v1/healthcheck', healthcheck)
 
 // app.use("/api/v1/tweets", tweetRouter)
 
